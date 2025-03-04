@@ -1,0 +1,13 @@
+name: SelecoHub
+version: 1.0
+main: com.matheusdev.selocoplugin.selecoHub.SelecoHub
+api-version: 1.21
+
+commands:
+  seloco:
+    description: Comando principal do plugin SelecoHub.
+    usage: /seloco <comando>
+  lobby:
+    description: Teleporta o jogador para o lobby.
+    usage: /lobby
+    aliases: [spawn, hub]

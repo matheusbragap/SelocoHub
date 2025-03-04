@@ -1,0 +1,34 @@
+# Configurações do plugin SelecoHub
+
+# Proteção do spawn (true = ativada, false = desativada)
+spawn_protection: true
+
+# Localização do lobby
+lobby:
+  world: world
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  yaw: 0.0
+  pitch: 0.0
+  void-layer: -64
+  horizontal-distance: 100.0
+
+game-settings:
+  disable-hunger: true
+  disable-damage: true
+  disable-rain: true
+  disable-block-burn: true
+  disable-drop-item: true
+  disable-item-move: true
+  disable-item-damage: true
+  disable-pick-up-items: true
+  disable-explode: true
+  disable-daylight-cycle: true
+
+# Configurações do comando /lobby
+lobby_command:
+  aliases:
+    - spawn
+    - hub
+    - l
