@@ -1,5 +1,6 @@
 package com.matheusdev.selocoplugin.selecoHub.commands;
 
+import com.matheusdev.selocoplugin.selecoHub.listeners.JumpPads;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,12 +14,14 @@ import java.nio.charset.StandardCharsets;
 
 public class PluginReload {
     private final JavaPlugin plugin;
+    private final JumpPads jumpPads;
 
-    public PluginReload(JavaPlugin plugin) {
+    public PluginReload(JavaPlugin plugin, JumpPads jumpPads) {
         this.plugin = plugin;
+        this.jumpPads = jumpPads;
     }
 
-    public void execute(CommandSender sender) {
+    public void execute(CommandSender sender, boolean overwriteChanges) {
         File configFile = new File(plugin.getDataFolder(), "config.yml");
 
         // Se o arquivo config.yml não existir, copia o padrão
@@ -26,18 +29,19 @@ public class PluginReload {
             plugin.saveDefaultConfig();
             sender.sendMessage("§aArquivo config.yml restaurado com sucesso!");
         } else {
-            // Corrige valores ausentes no config.yml
-            if (fixMissingConfigValues(configFile)) {
+            // Corrige valores ausentes ou inválidos no config.yml
+            if (fixMissingConfigValues(configFile, overwriteChanges)) {
                 sender.sendMessage("§aConfig.yml corrigido e reorganizado!");
             }
         }
 
         // Recarrega as configurações
         plugin.reloadConfig();
+        jumpPads.reloadConfig(); // Recarrega as configurações dos JumpPads
         sender.sendMessage("§aConfigurações do plugin recarregadas com sucesso!");
     }
 
-    private boolean fixMissingConfigValues(File configFile) {
+    private boolean fixMissingConfigValues(File configFile, boolean overwriteChanges) {
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
         boolean changed = false;
 
@@ -53,14 +57,37 @@ public class PluginReload {
                 // Define o valor padrão
                 config.set(key, defaultConfig.get(key));
                 changed = true;
+            } else if (overwriteChanges) {
+                // Verifica se o valor atual é inválido (incompleto ou incorreto)
+                Object currentValue = config.get(key);
+                Object defaultValue = defaultConfig.get(key);
+
+                // Se o tipo do valor atual for diferente do tipo do valor padrão, corrige
+                if (currentValue != null && defaultValue != null && !currentValue.getClass().equals(defaultValue.getClass())) {
+                    config.set(key, defaultValue);
+                    changed = true;
+                }
+
+                // Verifica valores específicos (por exemplo, booleanos incompletos)
+                if (defaultValue instanceof Boolean) {
+                    // Se o valor atual for uma string que representa um booleano incompleto
+                    if (currentValue instanceof String) {
+                        String currentValueStr = ((String) currentValue).toLowerCase();
+                        if (!currentValueStr.equals("true") && !currentValueStr.equals("false")) {
+                            config.set(key, defaultValue);
+                            changed = true;
+                        }
+                    }
+                }
             }
         }
 
         // Se algo foi alterado, salva o arquivo
         if (changed) {
             try {
+                // Salva o arquivo com a formatação correta
                 config.save(configFile);
-                Bukkit.getLogger().info("Config.yml atualizado! Valores ausentes foram preenchidos.");
+                Bukkit.getLogger().info("Config.yml atualizado! Valores ausentes ou inválidos foram corrigidos.");
             } catch (IOException e) {
                 Bukkit.getLogger().warning("Erro ao salvar config.yml!");
             }

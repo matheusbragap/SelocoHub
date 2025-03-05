@@ -1,5 +1,6 @@
 package com.matheusdev.selocoplugin.selecoHub.listeners;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -66,10 +67,9 @@ public class ProtectWorld implements Listener {
 
         // Impede a quebra de blocos se o modo de construção estiver desativado
         event.setCancelled(true);
-        player.sendMessage("§cVocê não pode quebrar blocos enquanto o modo de construção estiver desativado.");
     }
 
-    // Verifica interações e pode adicionar mais verificações, se necessário
+    // Verifica interações e permite interações com placas de pressão e botões
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
@@ -84,7 +84,15 @@ public class ProtectWorld implements Listener {
             return; // Permite interações se o modo de construção estiver ativado
         }
 
-        // Cancela a interação se o modo de construção estiver desativado
+        // Verifica se o bloco interagido é uma placa de pressão ou botão
+        if (event.getClickedBlock() != null) {
+            Material material = event.getClickedBlock().getType();
+            if (isPressurePlate(material) || isButton(material)) {
+                return; // Permite interações com placas de pressão e botões
+            }
+        }
+
+        // Cancela a interação se o modo de construção estiver desativado e o bloco não for uma placa de pressão ou botão
         event.setCancelled(true);
     }
 
@@ -104,5 +112,15 @@ public class ProtectWorld implements Listener {
 
         // Cancela a interação com entidades se o modo de construção estiver desativado
         event.setCancelled(true);
+    }
+
+    // Verifica se o material é uma placa de pressão
+    private boolean isPressurePlate(Material material) {
+        return material.name().endsWith("_PRESSURE_PLATE");
+    }
+
+    // Verifica se o material é um botão
+    private boolean isButton(Material material) {
+        return material.name().endsWith("_BUTTON");
     }
 }

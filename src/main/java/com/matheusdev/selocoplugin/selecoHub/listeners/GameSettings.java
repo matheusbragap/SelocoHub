@@ -1,5 +1,6 @@
 package com.matheusdev.selocoplugin.selecoHub.listeners;
 
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -21,14 +22,32 @@ public class GameSettings implements Listener {
     // Construtor que recebe uma instância do plugin
     public GameSettings(JavaPlugin plugin) {
         this.plugin = plugin;
+        setupLobbyWorld(); // Configura o mundo do lobby ao iniciar o plugin
+    }
+
+    // Método para configurar o mundo do lobby
+    private void setupLobbyWorld() {
+        String lobbyWorldName = plugin.getConfig().getString("lobby.world");
+        if (lobbyWorldName != null) {
+            World lobbyWorld = plugin.getServer().getWorld(lobbyWorldName);
+            if (lobbyWorld != null) {
+                // Desativa o ciclo de tempo e o clima no mundo do lobby
+                lobbyWorld.setGameRule(org.bukkit.GameRule.DO_DAYLIGHT_CYCLE, false);
+                lobbyWorld.setGameRule(org.bukkit.GameRule.DO_WEATHER_CYCLE, false);
+                lobbyWorld.setStorm(false); // Para a chuva imediatamente
+                lobbyWorld.setThundering(false); // Para tempestades imediatamente
+                plugin.getLogger().info("Configurações do mundo do lobby aplicadas: clima e ciclo de tempo desativados.");
+            } else {
+                plugin.getLogger().warning("Mundo do lobby não encontrado: " + lobbyWorldName);
+            }
+        } else {
+            plugin.getLogger().warning("Nome do mundo do lobby não está definido no config.yml.");
+        }
     }
 
     // Método para verificar se o evento ocorreu no mundo do lobby
     private boolean isLobbyWorld(org.bukkit.event.Event event) {
-        // Recupera o nome do mundo do lobby do config.yml
         String lobbyWorld = plugin.getConfig().getString("lobby.world");
-
-        // Verifica se o mundo do evento é o mesmo que o mundo do lobby
         if (lobbyWorld != null) {
             if (event instanceof org.bukkit.event.world.WorldEvent) {
                 return ((org.bukkit.event.world.WorldEvent) event).getWorld().getName().equals(lobbyWorld);
@@ -83,11 +102,8 @@ public class GameSettings implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (isLobbyWorld(event)) {
-            // Verifica se o evento foi causado por um jogador
             if (event.getWhoClicked() instanceof org.bukkit.entity.Player) {
                 org.bukkit.entity.Player player = (org.bukkit.entity.Player) event.getWhoClicked();
-
-                // Permite o movimento de itens apenas no modo Criativo
                 if (player.getGameMode() != org.bukkit.GameMode.CREATIVE) {
                     disableItemMove(event); // Desativa o movimento de itens
                 }

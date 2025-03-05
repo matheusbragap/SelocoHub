@@ -10,4 +10,4 @@ commands:
   lobby:
     description: Teleporta o jogador para o lobby.
     usage: /lobby
-    aliases: [spawn, hub]
+    aliases: [spawn, hub, l]

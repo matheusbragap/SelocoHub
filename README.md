@@ -22,6 +22,12 @@ O **SelecoHub** é um plugin completo para proteção e gerenciamento de spawn e
 - **📍 Setar Coordenadas do Spawn:** Defina as coordenadas exatas do spawn.
 - **🕳️ Anti-Void:** Teleporta jogadores para o spawn caso caiam no void.
 - **🚶 Teleporte Automático por Distância:** Teleporta jogadores para o spawn caso se afastem demais. É possível setar valores horizontais e verticais.
+- **🧹 Clear Inventory:** Limpa o inventário do jogador ao entrar.
+- **❤️ Heal Player:** Recupera a vida do jogador ao entrar.
+- **🎮 Set Gamemode:** Define o GameMode ao entrar (SURVIVAL, CREATIVE, ADVENTURE ou SPECTATOR).
+- **⚡ Efeitos:**
+- **🏃‍♂️ Speed:** Aplica efeito de velocidade 1 ao jogador.
+- **🦘 Jump Boost:** Aplica efeito de super pulo 1 ao jogador.
 
 ### 🛠️ Modo Build por Comando
 - **🏗️ Ativar/Desativar Modo Build:** Controle a construção no spawn com um comando simples.
@@ -45,52 +51,98 @@ O **SelecoHub** é um plugin completo para proteção e gerenciamento de spawn e
 | `/seloco setlobby`  | Define o mundo e as coordenadas do lobby.   | `seloco.setlobby`  |
 | `/seloco build`     | Habilita a função de construir no mapa do lobby. | `seloco.builder`   |
 
-## 🔑 Permissões
-- `seloco.builder`: Permite usar os comandos `/seloco ajuda` e `/seloco build`.
-- `seloco.*`: Permite usar todos os comandos do plugin.
-- `seloco.ajuda`: Permite usar o comando `/seloco ajuda`.
-- `seloco.setlobby`: Permite usar o comando `/seloco setlobby`.
-- `seloco.build`: Permite usar o comando `/seloco build`.
-- `seloco.reload`: Permite usar o comando `/seloco reload`.
-
 ## ⚙️ Configuração
 O arquivo `config.yml` permite personalizar as funcionalidades do plugin. Aqui está um exemplo:
 
 ```yaml
-# Configurações do plugin SelecoHub
+# Plugin: SelocoHub
+# Autor: matheusdev
+# Versão: 1.0.1 alpha
+# Descrição: Um plugin para gerenciar o lobby e funcionalidades relacionadas.
+
+###############################################
+# CONFIGURAÇÕES GERAIS #
+###############################################
 
 # Proteção do spawn (true = ativada, false = desativada)
 spawn_protection: true
 
+###############################################
+# LOBBY #
+###############################################
+
 # Localização do lobby
 lobby:
-  world: world
-  x: 0.0
-  y: 0.0
-  z: 0.0
-  yaw: 0.0
-  pitch: 0.0
-  void-layer: -64
-  horizontal-distance: 100.0
+  world: world  # Nome do mundo do lobby
+  x: 0.0        # Coordenada X do lobby
+  y: 0.0        # Coordenada Y do lobby
+  z: 0.0        # Coordenada Z do lobby
+  yaw: 0.0      # Rotação horizontal (yaw) do lobby
+  pitch: 0.0    # Rotação vertical (pitch) do lobby
+
+###############################################
+# TELEPORTE AO ENTRAR NO SERVIDOR #
+###############################################
+
+tp-join-lobby:
+  active: true          # Ativa ou desativa o teleporte ao lobby ao entrar no servidor
+  only-world-lobby: false # Se true, só teleporta se o jogador deslogou no mundo do lobby
+
+###############################################
+# CONFIGURAÇÕES AO ENTRAR NO SERVIDOR #
+###############################################
+
+on-join-settings:
+  clear-inventory: true # Limpa o inventário do jogador ao entrar
+  heal-player: true # Enche a vida do jogador ao entrar
+  set-gamemode: ADVENTURE # Define o GameMode ao entrar (Pode ser SURVIVAL, CREATIVE, ADVENTURE ou SPECTATOR)
+  effects:
+    speed: true # Aplica efeito de velocidade 1 ao jogador
+    jump-boost: true # Aplica efeito de super pulo 1 ao jogador
+
+###############################################
+# CONFIGURAÇÕES DE JOGO #
+###############################################
 
 game-settings:
-  disable-hunger: true
-  disable-damage: true
-  disable-rain: true
-  disable-block-burn: true
-  disable-drop-item: true
-  disable-item-move: true
-  disable-item-damage: true
-  disable-pick-up-items: true
-  disable-explode: true
-  disable-daylight-cycle: true
+  disable-hunger: true         # Desativa a fome
+  disable-damage: true         # Desativa o dano
+  disable-rain: true           # Desativa a chuva
+  disable-block-burn: true     # Desativa a queima de blocos
+  disable-drop-item: true      # Desativa o drop de itens
+  disable-item-move: true      # Desativa o movimento de itens no inventário
+  disable-item-damage: true    # Desativa o dano a itens
+  disable-pick-up-items: true  # Desativa a coleta de itens
+  disable-explode: true        # Desativa explosões
+  disable-daylight-cycle: true # Desativa o ciclo diurno
 
-# Configurações do comando /lobby
-lobby_command:
-  aliases:
-    - spawn
-    - hub
-    - l
+###############################################
+# TELEPORTE POR DISTÂNCIA #
+###############################################
+
+teleport-distance:
+  activate: true   # Ativa ou desativa o teleporte por distância
+  horizontal: 150  # Distância horizontal máxima permitida
+  vertical: 100    # Distância vertical máxima permitida
+
+###############################################
+# JUMPPADS #
+###############################################
+
+jumppads:
+  enabled: false # Ativa ou desativa os JumpPads
+  vertical: 1.5 # Potência vertical do JumpPad
+  horizontal: 1.5 # Potência horizontal do JumpPad
+  items:
+    OAK_PRESSURE_PLATE: true
+    SPRUCE_PRESSURE_PLATE: true
+    BIRCH_PRESSURE_PLATE: true
+    JUNGLE_PRESSURE_PLATE: true
+    ACACIA_PRESSURE_PLATE: true
+    DARK_OAK_PRESSURE_PLATE: true
+    STONE_PRESSURE_PLATE: true
+    HEAVY_WEIGHTED_PRESSURE_PLATE: true
+    LIGHT_WEIGHTED_PRESSURE_PLATE: true
 ```
 
 ## 📜 Licença

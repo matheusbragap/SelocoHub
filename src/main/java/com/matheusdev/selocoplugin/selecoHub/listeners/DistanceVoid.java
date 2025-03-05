@@ -22,19 +22,22 @@ public class DistanceVoid implements Listener {
 
         // Verifica se o jogador está no mundo do lobby
         if (isLobbyWorld(player)) {
-            // Recupera a camada de void definida no config.yml
-            int voidLayer = plugin.getConfig().getInt("lobby.void-layer", -64);
-            // Recupera a distância horizontal permitida do config.yml
-            double horizontalDistance = plugin.getConfig().getDouble("lobby.horizontal-distance", 100.0);
+            // Recupera as configurações de teleporte por distância
+            boolean teleportDistanceEnabled = plugin.getConfig().getBoolean("teleport-distance.activate", true);
+            int horizontalRadius = plugin.getConfig().getInt("teleport-distance.horizontal", 150); // Raio horizontal (padrão: 150)
+            int verticalRange = plugin.getConfig().getInt("teleport-distance.vertical", 100); // Raio vertical (padrão: 100)
 
-            // Verifica se o jogador atingiu ou ultrapassou a camada de void
-            if (player.getLocation().getY() <= voidLayer) {
-                teleportToLobby(player); // Teleporta o jogador para o lobby
-            }
+            // Verifica se o teleporte por distância está ativado
+            if (teleportDistanceEnabled) {
+                // Verifica a distância horizontal (X e Z)
+                if (isOutsideHorizontalRadius(player, horizontalRadius)) {
+                    teleportToLobby(player); // Teleporta o jogador para o lobby se ultrapassar o raio horizontal
+                }
 
-            // Verifica a distância horizontal
-            if (player.getLocation().distanceSquared(getLobbyLocation(player)) > horizontalDistance * horizontalDistance) {
-                teleportToLobby(player); // Teleporta o jogador para o lobby se ultrapassar a distância
+                // Verifica a distância vertical (Y)
+                if (isOutsideVerticalRange(player, verticalRange)) {
+                    teleportToLobby(player); // Teleporta o jogador para o lobby se ultrapassar o raio vertical
+                }
             }
         }
     }
@@ -43,6 +46,26 @@ public class DistanceVoid implements Listener {
     private boolean isLobbyWorld(Player player) {
         String lobbyWorld = plugin.getConfig().getString("lobby.world");
         return lobbyWorld != null && player.getWorld().getName().equals(lobbyWorld);
+    }
+
+    // Método para verificar se o jogador está fora do raio horizontal
+    private boolean isOutsideHorizontalRadius(Player player, int horizontalRadius) {
+        Location lobbyLocation = getLobbyLocation(player);
+        double deltaX = Math.abs(player.getLocation().getX() - lobbyLocation.getX()); // Distância absoluta em X
+        double deltaZ = Math.abs(player.getLocation().getZ() - lobbyLocation.getZ()); // Distância absoluta em Z
+
+        // Verifica se o jogador ultrapassou o limite em X ou Z
+        return deltaX > horizontalRadius || deltaZ > horizontalRadius;
+    }
+
+    // Método para verificar se o jogador está fora do raio vertical
+    private boolean isOutsideVerticalRange(Player player, int verticalRange) {
+        Location lobbyLocation = getLobbyLocation(player);
+        double lobbyY = lobbyLocation.getY();
+        double playerY = player.getLocation().getY();
+
+        // Verifica se o jogador ultrapassou o limite para cima ou para baixo
+        return playerY > (lobbyY + verticalRange) || playerY < (lobbyY - verticalRange);
     }
 
     // Método para obter a localização do lobby

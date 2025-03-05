@@ -8,12 +8,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class SpawnTeleport implements CommandExecutor {
-    private JavaPlugin plugin;
+    private final JavaPlugin plugin;
+    private final HashMap<UUID, Long> cooldowns; // Mapa para armazenar os cooldowns dos jogadores
+    private final long cooldownTime = 5; // Cooldown de 5 segundos
 
     // Construtor que recebe uma instância do plugin
     public SpawnTeleport(JavaPlugin plugin) {
         this.plugin = plugin;
+        this.cooldowns = new HashMap<>();
     }
 
     // Método que executa o comando /lobby
@@ -21,6 +27,14 @@ public class SpawnTeleport implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
+            UUID playerId = player.getUniqueId();
+
+            // Verifica se o jogador está em cooldown
+            if (isOnCooldown(playerId)) {
+                long remainingTime = getRemainingCooldown(playerId);
+                player.sendMessage("§cAguarde " + remainingTime + " segundos antes de usar este comando novamente.");
+                return true;
+            }
 
             // Carrega as coordenadas do lobby do config.yml
             String lobbyWorldName = plugin.getConfig().getString("lobby.world");
@@ -47,9 +61,38 @@ public class SpawnTeleport implements CommandExecutor {
             // Teleporta o jogador para o lobby
             player.teleport(lobbyLocation);
             player.sendMessage("§aTeleportado para o lobby!");
+
+            // Aplica o cooldown ao jogador
+            applyCooldown(playerId);
         } else {
             sender.sendMessage("§cEste comando só pode ser executado por um jogador.");
         }
         return true;
+    }
+
+    // Método para verificar se o jogador está em cooldown
+    private boolean isOnCooldown(UUID playerId) {
+        if (cooldowns.containsKey(playerId)) {
+            long currentTime = System.currentTimeMillis() / 1000; // Tempo atual em segundos
+            long lastUsedTime = cooldowns.get(playerId);
+            return (currentTime - lastUsedTime) < cooldownTime;
+        }
+        return false;
+    }
+
+    // Método para obter o tempo restante do cooldown
+    private long getRemainingCooldown(UUID playerId) {
+        if (cooldowns.containsKey(playerId)) {
+            long currentTime = System.currentTimeMillis() / 1000; // Tempo atual em segundos
+            long lastUsedTime = cooldowns.get(playerId);
+            return cooldownTime - (currentTime - lastUsedTime);
+        }
+        return 0;
+    }
+
+    // Método para aplicar o cooldown ao jogador
+    private void applyCooldown(UUID playerId) {
+        long currentTime = System.currentTimeMillis() / 1000; // Tempo atual em segundos
+        cooldowns.put(playerId, currentTime);
     }
 }
