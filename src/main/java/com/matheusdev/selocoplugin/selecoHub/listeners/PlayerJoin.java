@@ -79,15 +79,7 @@ public class PlayerJoin implements Listener {
             plugin.getLogger().warning("GameMode inválido no config.yml. Usando ADVENTURE como padrão.");
         }
 
-        // Aplica o GameMode ao jogador
-        player.setGameMode(gamemode);
-        plugin.getLogger().info("GameMode " + gamemode + " aplicado ao jogador " + player.getName() + ".");
-
-        // Verifica se o GameMode foi aplicado corretamente
-        if (player.getGameMode() != gamemode) {
-            plugin.getLogger().warning("Falha ao aplicar o GameMode " + gamemode + " ao jogador " + player.getName() + ".");
-        } else {
-            plugin.getLogger().info("GameMode " + gamemode + " aplicado com sucesso ao jogador " + player.getName() + ".");
-        }
+        player.setGameMode(gamemode); // Define o GameMode do jogador
+        plugin.getLogger().info("GameMode do jogador " + player.getName() + " definido como " + gamemode.name() + ".");
     }
 }

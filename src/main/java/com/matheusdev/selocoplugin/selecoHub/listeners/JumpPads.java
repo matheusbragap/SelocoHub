@@ -9,17 +9,18 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.bukkit.event.block.Action;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class JumpPads implements Listener {
 
     private final JavaPlugin plugin;
     private String lobbyWorld;
-    private boolean jumpPadsEnabled;
+    private boolean jumpPadsActivate; // Alterado de "jumpPadsEnabled" para "jumpPadsActivate"
     private double verticalPower;
     private double horizontalPower;
-    private Map<Material, Boolean> pressurePlates;
+    private Set<Material> pressurePlates;
 
     public JumpPads(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -33,25 +34,28 @@ public class JumpPads implements Listener {
 
     private void loadConfig() {
         // Carrega o mundo do lobby do config.yml
-        lobbyWorld = plugin.getConfig().getString("lobby.world", "world");
+        lobbyWorld = plugin.getConfig().getString("lobby.world");
 
         // Carrega as configurações dos JumpPads
-        jumpPadsEnabled = plugin.getConfig().getBoolean("jumppads.enabled", true);
-        verticalPower = plugin.getConfig().getDouble("jumppads.vertical", 1.5);
-        horizontalPower = plugin.getConfig().getDouble("jumppads.horizontal", 1.5);
+        jumpPadsActivate = plugin.getConfig().getBoolean("jumppads.activate"); // Alterado de "enabled" para "activate"
+        verticalPower = plugin.getConfig().getDouble("jumppads.vertical");
+        horizontalPower = plugin.getConfig().getDouble("jumppads.horizontal");
 
         // Carrega a lista de placas de pressão ativas
-        pressurePlates = new HashMap<>();
-        for (Material material : Material.values()) {
-            if (material.name().endsWith("_PRESSURE_PLATE")) {
-                boolean enabled = plugin.getConfig().getBoolean("jumppads.items." + material.name(), true);
-                pressurePlates.put(material, enabled);
+        pressurePlates = new HashSet<>();
+        List<String> pressurePlateNames = plugin.getConfig().getStringList("jumppads.items");
+        for (String plateName : pressurePlateNames) {
+            try {
+                Material material = Material.valueOf(plateName.toUpperCase());
+                pressurePlates.add(material);
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Material inválido no config.yml: " + plateName);
             }
         }
 
         // Mensagem de depuração para verificar as configurações carregadas
         plugin.getLogger().info("Configurações carregadas:");
-        plugin.getLogger().info("JumpPads Enabled: " + jumpPadsEnabled);
+        plugin.getLogger().info("JumpPads Activate: " + jumpPadsActivate); // Alterado de "Enabled" para "Activate"
         plugin.getLogger().info("Vertical Power: " + verticalPower);
         plugin.getLogger().info("Horizontal Power: " + horizontalPower);
         plugin.getLogger().info("Pressure Plates: " + pressurePlates);
@@ -66,8 +70,8 @@ public class JumpPads implements Listener {
 
         Player player = event.getPlayer();
 
-        // Verifica se os JumpPads estão habilitados
-        if (!jumpPadsEnabled) {
+        // Verifica se os JumpPads estão ativados
+        if (!jumpPadsActivate) { // Alterado de "jumpPadsEnabled" para "jumpPadsActivate"
             return;
         }
 
@@ -87,6 +91,6 @@ public class JumpPads implements Listener {
 
     // Verifica se o material é uma placa de pressão e se está ativa
     private boolean isPressurePlateEnabled(Material material) {
-        return pressurePlates.getOrDefault(material, false);
+        return pressurePlates.contains(material);
     }
 }

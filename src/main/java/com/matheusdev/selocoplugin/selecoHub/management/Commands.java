@@ -53,7 +53,7 @@ public class Commands implements CommandExecutor {
             }
 
             if (args.length == 0) {
-                sender.sendMessage("§cUso correto: /seloco <comando>");
+                sender.sendMessage("§cUse: /seloco ajuda");
                 return true;
             }
 

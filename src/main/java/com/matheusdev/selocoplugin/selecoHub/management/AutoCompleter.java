@@ -18,16 +18,38 @@ public class AutoCompleter implements TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> completions = new ArrayList<>();
 
+        // Verifica se o comando é /seloco
         if (command.getName().equalsIgnoreCase("seloco")) {
-            if (args.length == 1) {
-                completions.add("ajuda");
-                completions.add("setlobby");
-                completions.add("build");
-                completions.add("reload");
+            // Verifica se o jogador tem pelo menos uma permissão para usar o comando /seloco
+            if (!hasAnyPermission(sender)) {
+                return completions; // Retorna uma lista vazia se o jogador não tiver nenhuma permissão
             }
-            // Removido o caso para sugerir IDs de blocos
+
+            // Adiciona sugestões apenas se o jogador tiver permissão para cada subcomando
+            if (args.length == 1) {
+                if (permissions.canUseAjuda(sender)) {
+                    completions.add("ajuda");
+                }
+                if (permissions.canUseSetLobby(sender)) {
+                    completions.add("setlobby");
+                }
+                if (permissions.canUseBuild(sender)) {
+                    completions.add("build");
+                }
+                if (permissions.canUseReload(sender)) {
+                    completions.add("reload");
+                }
+            }
         }
 
         return completions;
+    }
+
+    // Verifica se o jogador tem pelo menos uma permissão para usar o comando /seloco
+    private boolean hasAnyPermission(CommandSender sender) {
+        return permissions.canUseAjuda(sender) ||
+                permissions.canUseSetLobby(sender) ||
+                permissions.canUseBuild(sender) ||
+                permissions.canUseReload(sender);
     }
 }

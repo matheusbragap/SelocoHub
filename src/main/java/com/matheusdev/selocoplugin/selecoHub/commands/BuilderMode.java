@@ -37,6 +37,9 @@ public class BuilderMode {
                 boolean currentMode = protectWorld.isBuilderModeEnabled(player);
                 protectWorld.setBuilderMode(player, !currentMode);
 
+                // Limpa o inventário do jogador ao ativar ou desativar o modo Builder
+                player.getInventory().clear(); // Limpa todos os itens do inventário
+
                 if (!currentMode) {
                     // Ativa o modo Builder
                     // Armazena o modo de jogo original nos metadados do jogador
@@ -45,9 +48,6 @@ public class BuilderMode {
                     player.sendMessage("§aModo Builder ativado!");
                 } else {
                     // Desativa o modo Builder
-                    // Limpa o inventário do jogador
-                    player.getInventory().clear(); // Limpa todos os itens do inventário
-
                     // Obtém o modo de jogo original dos metadados do jogador
                     if (player.hasMetadata(ORIGINAL_GAMEMODE_KEY)) {
                         GameMode originalMode = (GameMode) player.getMetadata(ORIGINAL_GAMEMODE_KEY).get(0).value();

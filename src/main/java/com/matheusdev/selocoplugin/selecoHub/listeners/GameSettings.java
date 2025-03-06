@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent; // Importação adicionada
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -139,6 +140,13 @@ public class GameSettings implements Listener {
         }
     }
 
+    @EventHandler
+    public void onCreatureSpawn(CreatureSpawnEvent event) {
+        if (isLobbyWorld(event)) {
+            disableCreatureSpawn(event); // Desativa o spawn de criaturas
+        }
+    }
+
     // Métodos auxiliares para desativar funcionalidades
     private void disableHunger(FoodLevelChangeEvent event) {
         event.setCancelled(true);
@@ -177,6 +185,10 @@ public class GameSettings implements Listener {
     }
 
     private void disableDaylightCycle(TimeSkipEvent event) {
+        event.setCancelled(true);
+    }
+
+    private void disableCreatureSpawn(CreatureSpawnEvent event) {
         event.setCancelled(true);
     }
 }
