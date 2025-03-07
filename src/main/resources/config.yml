@@ -53,16 +53,16 @@ on-join-settings:
 
 # Configurações que afetam o comportamento do jogo no lobby
 game-settings:
-  disable-hunger: true         # Desativa a fome (jogadores não perdem fome)
-  disable-damage: true         # Desativa o dano (jogadores não sofrem dano)
-  disable-rain: true           # Desativa a chuva no mundo do lobby
-  disable-block-burn: true     # Desativa a queima de blocos (fogo não se espalha)
-  disable-drop-item: true      # Desativa o drop de itens (jogadores não podem soltar itens)
-  disable-item-move: true      # Desativa o movimento de itens no inventário (jogadores não podem reorganizar itens)
-  disable-item-damage: true    # Desativa o dano a itens (itens não perdem durabilidade)
-  disable-pick-up-items: true  # Desativa a coleta de itens (jogadores não podem pegar itens do chão)
-  disable-explode: true        # Desativa explosões (TNT, creepers, etc.)
-  disable-daylight-cycle: true # Desativa o ciclo diurno (o tempo não muda)
+  disable-hunger: true # Desativa a fome (jogadores não perdem fome)
+  disable-damage: true # Desativa o dano (jogadores não sofrem dano)
+  disable-rain: true # Desativa a chuva no mundo do lobby
+  disable-block-burn: true # Desativa a queima de blocos (fogo não se espalha)
+  disable-drop-item: true # Desativa o drop de itens (jogadores não podem soltar itens)
+  disable-item-move: true # Desativa o movimento de itens no inventário (jogadores não podem reorganizar itens)
+  disable-item-damage: true # Desativa o dano a itens (itens não perdem durabilidade)
+  disable-pick-up-items: true # Desativa a coleta de itens (jogadores não podem pegar itens do chão)
+  disable-explode: true # Desativa explosões (TNT, creepers, etc.)
+  disable-daylight-cycle: true # Desativa o ciclo diurno (setar os ticks no jogo)
 
 ###############################################
 # TELEPORTE POR DISTÂNCIA #

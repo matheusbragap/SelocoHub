@@ -3,6 +3,7 @@ package com.matheusdev.selocoplugin.selecoHub.management;
 import com.matheusdev.selocoplugin.selecoHub.commands.*;
 import com.matheusdev.selocoplugin.selecoHub.listeners.ProtectWorld;
 import com.matheusdev.selocoplugin.selecoHub.listeners.JumpPads;
+import com.matheusdev.selocoplugin.selecoHub.listeners.GameSettings; // Importe a classe GameSettings
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,15 +17,17 @@ public class Commands implements CommandExecutor {
     private final JavaPlugin plugin;
     private final ProtectWorld protectWorld;
     private final Permissions permissions;
-    private final JumpPads jumpPads; // Adicionado o parâmetro JumpPads
-    private final HashMap<UUID, Long> cooldowns; // Mapa para armazenar os cooldowns dos jogadores
-    private final long cooldownTime = 1; // Cooldown de 1 segundo
+    private final JumpPads jumpPads;
+    private final GameSettings gameSettings; // Adicionado o parâmetro GameSettings
+    private final HashMap<UUID, Long> cooldowns;
+    private final long cooldownTime = 1;
 
-    public Commands(JavaPlugin plugin, ProtectWorld protectWorld, Permissions permissions, JumpPads jumpPads) {
+    public Commands(JavaPlugin plugin, ProtectWorld protectWorld, Permissions permissions, JumpPads jumpPads, GameSettings gameSettings) {
         this.plugin = plugin;
         this.protectWorld = protectWorld;
         this.permissions = permissions;
-        this.jumpPads = jumpPads; // Inicializa o parâmetro JumpPads
+        this.jumpPads = jumpPads;
+        this.gameSettings = gameSettings; // Inicializa o parâmetro GameSettings
         this.cooldowns = new HashMap<>();
     }
 
@@ -84,7 +87,8 @@ public class Commands implements CommandExecutor {
                     break;
                 case "reload":
                     if (permissions.canUseReload(sender)) {
-                        new PluginReload(plugin, jumpPads).execute(sender,true); // Passa a instância de JumpPads
+                        // Passa a instância de JumpPads e GameSettings para o PluginReload
+                        new PluginReload(plugin, jumpPads, gameSettings).execute(sender, true);
                     } else {
                         sender.sendMessage("§cVocê não tem permissão para usar este comando.");
                     }

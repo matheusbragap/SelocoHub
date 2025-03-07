@@ -23,14 +23,14 @@ public final class SelecoHub extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
-        // Instancia as classes necessárias
         ProtectWorld protectWorld = new ProtectWorld(this);
         Permissions permissions = new Permissions();
         JumpPads jumpPads = new JumpPads(this);
-        Commands commands = new Commands(this, protectWorld, permissions, jumpPads); // Passa a instância de JumpPads
+        GameSettings gameSettings = new GameSettings(this);
+
+        Commands commands = new Commands(this, protectWorld, permissions, jumpPads, gameSettings);
         AutoCompleter autoCompleter = new AutoCompleter(permissions);
 
-        // Registra o comando /seloco
         PluginCommand selocoCommand = getCommand("seloco");
         if (selocoCommand != null) {
             selocoCommand.setExecutor(commands);
@@ -39,7 +39,6 @@ public final class SelecoHub extends JavaPlugin {
             getLogger().warning("O comando /seloco não está registrado no plugin.yml!");
         }
 
-        // Registra o comando /lobby
         PluginCommand lobbyCommand = getCommand("lobby");
         if (lobbyCommand != null) {
             lobbyCommand.setExecutor(new SpawnTeleport(this));
@@ -48,33 +47,27 @@ public final class SelecoHub extends JavaPlugin {
             getLogger().warning("O comando /lobby não está registrado no plugin.yml!");
         }
 
-        // Registra os listeners
         getServer().getPluginManager().registerEvents(protectWorld, this);
         getServer().getPluginManager().registerEvents(new TpJoin(this), this);
-        getServer().getPluginManager().registerEvents(new GameSettings(this), this);
+        getServer().getPluginManager().registerEvents(gameSettings, this);
         getServer().getPluginManager().registerEvents(new DistanceVoid(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
         getServer().getPluginManager().registerEvents(jumpPads, this);
         getServer().getPluginManager().registerEvents(new OnJoin(this), this);
 
-        // Instancia a classe ExecuteItemAction
         ExecuteItemAction executeItemAction = new ExecuteItemAction(this);
-
-        // Registra os listeners de inventário
         getServer().getPluginManager().registerEvents(new ClickItems(this, executeItemAction), this);
 
-        // Executa a lógica de recarregar a configuração ao ligar o plugin
-        PluginReload pluginReload = new PluginReload(this, jumpPads);
-        pluginReload.execute(getServer().getConsoleSender(), true); // Passa true para sobrescrever alterações
+        PluginReload pluginReload = new PluginReload(this, jumpPads, gameSettings);
+        pluginReload.execute(getServer().getConsoleSender(), true);
 
         getLogger().info("Plugin SelecoHub carregado com sucesso!");
     }
 
     @Override
     public void onDisable() {
-        // Chama a lógica de recarregar a configuração ao desligar o plugin
-        PluginReload pluginReload = new PluginReload(this, new JumpPads(this));
-        pluginReload.execute(getServer().getConsoleSender(), true); // Passa true para sobrescrever alterações
+        PluginReload pluginReload = new PluginReload(this, new JumpPads(this), new GameSettings(this));
+        pluginReload.execute(getServer().getConsoleSender(), true);
         getLogger().info("Plugin SelecoHub desativado.");
     }
 }
