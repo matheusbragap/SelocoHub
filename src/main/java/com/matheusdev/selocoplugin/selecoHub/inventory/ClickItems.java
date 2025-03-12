@@ -26,9 +26,7 @@ public class ClickItems implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        // Verifica se os itens da hotbar estão ativados
-        boolean hotbarLobbyActivate = plugin.getConfig().getBoolean("hotbar-lobby.activate", false); // Alterado para "hotbar-lobby"
-        if (!hotbarLobbyActivate) {
+        if (!plugin.getConfig().getBoolean("hotbar-lobby.activate")) {
             return;
         }
 
@@ -43,18 +41,14 @@ public class ClickItems implements Listener {
         }
 
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
-        if (itemInHand != null && itemInHand.getType() != Material.AIR) {
-            Material itemType = itemInHand.getType();
+        if (itemInHand.getType() != Material.AIR && isItemDefinedInConfig(itemInHand)) {
+            event.setCancelled(true);
 
-            if (isItemDefinedInConfig(itemInHand)) {
-                event.setCancelled(true);
-
-                if (event.getAction().toString().contains("RIGHT_CLICK") || event.getAction().toString().contains("LEFT_CLICK")) {
-                    List<String> actions = getItemActions(itemType);
-                    if (actions != null && !actions.isEmpty()) {
-                        for (String action : actions) {
-                            executeItemAction.execute(player, action);
-                        }
+            if (event.getAction().toString().contains("RIGHT_CLICK") || event.getAction().toString().contains("LEFT_CLICK")) {
+                List<String> actions = getItemActions(itemInHand.getType());
+                if (actions != null && !actions.isEmpty()) {
+                    for (String action : actions) {
+                        executeItemAction.execute(player, action);
                     }
                 }
             }
@@ -69,9 +63,7 @@ public class ClickItems implements Listener {
 
         Player player = (Player) event.getWhoClicked();
 
-        // Verifica se os itens da hotbar estão ativados
-        boolean hotbarLobbyActivate = plugin.getConfig().getBoolean("hotbar-lobby.activate", false); // Alterado para "hotbar-lobby"
-        if (!hotbarLobbyActivate) {
+        if (!plugin.getConfig().getBoolean("hotbar-lobby.activate")) {
             return;
         }
 
@@ -86,17 +78,13 @@ public class ClickItems implements Listener {
         }
 
         ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem != null && clickedItem.getType() != Material.AIR) {
-            Material itemType = clickedItem.getType();
+        if (clickedItem != null && clickedItem.getType() != Material.AIR && isItemDefinedInConfig(clickedItem)) {
+            event.setCancelled(true);
 
-            if (isItemDefinedInConfig(clickedItem)) {
-                event.setCancelled(true);
-
-                List<String> actions = getItemActions(itemType);
-                if (actions != null && !actions.isEmpty()) {
-                    for (String action : actions) {
-                        executeItemAction.execute(player, action);
-                    }
+            List<String> actions = getItemActions(clickedItem.getType());
+            if (actions != null && !actions.isEmpty()) {
+                for (String action : actions) {
+                    executeItemAction.execute(player, action);
                 }
             }
         }
@@ -112,7 +100,7 @@ public class ClickItems implements Listener {
             String itemName = meta.getDisplayName();
             List<String> itemLore = meta.getLore();
 
-            List<Map<?, ?>> itemsConfig = plugin.getConfig().getMapList("hotbar-lobby.items"); // Alterado para "hotbar-lobby"
+            List<Map<?, ?>> itemsConfig = plugin.getConfig().getMapList("hotbar-lobby.items");
 
             for (Map<?, ?> itemConfig : itemsConfig) {
                 String configName = (String) itemConfig.get("name");
@@ -130,7 +118,7 @@ public class ClickItems implements Listener {
     }
 
     private List<String> getItemActions(Material itemType) {
-        List<Map<?, ?>> itemsConfig = plugin.getConfig().getMapList("hotbar-lobby.items"); // Alterado para "hotbar-lobby"
+        List<Map<?, ?>> itemsConfig = plugin.getConfig().getMapList("hotbar-lobby.items");
         for (Map<?, ?> itemConfig : itemsConfig) {
             String materialName = (String) itemConfig.get("material");
             if (materialName != null && Material.getMaterial(materialName) == itemType) {

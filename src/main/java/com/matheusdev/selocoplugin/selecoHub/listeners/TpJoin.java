@@ -21,7 +21,7 @@ public class TpJoin implements Listener {
         Player player = event.getPlayer();
 
         // Verifica se o teleporte ao lobby ao entrar está ativado
-        boolean tpJoinLobbyActive = plugin.getConfig().getBoolean("tp-join-lobby.active", true);
+        boolean tpJoinLobbyActive = plugin.getConfig().getBoolean("tp-join-lobby.activate", true);
         if (!tpJoinLobbyActive) {
             return; // Se não estiver ativado, não faz nada
         }
@@ -59,5 +59,6 @@ public class TpJoin implements Listener {
 
         // Teleporta o jogador para o lobby
         player.teleport(lobbyLocation);
+        plugin.getLogger().info("Jogador " + player.getName() + " foi teleportado para o lobby.");
     }
 }

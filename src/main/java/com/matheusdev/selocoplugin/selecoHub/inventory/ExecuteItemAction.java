@@ -5,8 +5,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.List;
-
 public class ExecuteItemAction {
     private final JavaPlugin plugin;
 
@@ -20,10 +18,8 @@ public class ExecuteItemAction {
             return;
         }
 
-        // Substitui placeholders como %player% pelo nome do jogador
         action = action.replace("%player%", player.getName());
 
-        // Verifica o tipo de ação com base no prefixo
         if (action.startsWith("[console]")) {
             executeConsoleCommand(action);
         } else if (action.startsWith("[player]")) {
@@ -40,7 +36,6 @@ public class ExecuteItemAction {
     }
 
     private void executeConsoleCommand(String action) {
-        // Remove o prefixo [console] e executa o comando no console
         String command = action.substring("[console]".length()).trim();
         if (!command.isEmpty()) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
@@ -48,7 +43,6 @@ public class ExecuteItemAction {
     }
 
     private void executePlayerCommand(Player player, String action) {
-        // Remove o prefixo [player] e executa o comando como o jogador
         String command = action.substring("[player]".length()).trim();
         if (!command.isEmpty()) {
             player.performCommand(command);
@@ -56,7 +50,6 @@ public class ExecuteItemAction {
     }
 
     private void sendMessageToPlayer(Player player, String action) {
-        // Remove o prefixo [message] e envia a mensagem ao jogador
         String message = action.substring("[message]".length()).trim();
         if (!message.isEmpty()) {
             player.sendMessage(message);
@@ -64,7 +57,6 @@ public class ExecuteItemAction {
     }
 
     private void broadcastSound(String action) {
-        // Remove o prefixo [broadcastsound] e toca o som para todos os jogadores
         String soundName = action.substring("[broadcastsound]".length()).trim();
         if (!soundName.isEmpty()) {
             try {
@@ -79,7 +71,6 @@ public class ExecuteItemAction {
     }
 
     private void playSoundToPlayer(Player player, String action) {
-        // Remove o prefixo [sound] e toca o som para o jogador específico
         String soundName = action.substring("[sound]".length()).trim();
         if (!soundName.isEmpty()) {
             try {

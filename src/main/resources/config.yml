@@ -1,6 +1,6 @@
 # Plugin: SelocoHub
 # Autor: matheusdev
-# Versão: 1.0.2 alpha
+# Versão: 1.0.3 beta
 # Descrição: Um plugin para gerenciar o lobby e funcionalidades relacionadas.
 
 ###############################################
@@ -18,7 +18,7 @@ spawn_protection: true
 # Localização do lobby
 # Define as coordenadas e rotação do ponto de spawn do lobby.
 lobby:
-  world: world  # Nome do mundo do lobby
+  world: lobby  # Nome do mundo do lobby
   x: 0.0        # Coordenada X do lobby
   y: 0.0        # Coordenada Y do lobby
   z: 0.0        # Coordenada Z do lobby
@@ -31,7 +31,7 @@ lobby:
 
 # Configurações de teleporte ao entrar no servidor
 tp-join-lobby:
-  active: true          # Ativa ou desativa o teleporte ao lobby ao entrar no servidor
+  activate: true          # Ativa ou desativa o teleporte ao lobby ao entrar no servidor
   only-world-lobby: false # Se true, só teleporta se o jogador deslogou no mundo do lobby. Caso contrário, teleporta independentemente do mundo.
 
 ###############################################
@@ -123,6 +123,28 @@ hotbar-lobby:
         - SHARPNESS:1
       actions:
         - '[message] discord: @matheusbragap'     # Envia uma mensagem ao jogador
+hide-players:
+  activate: true
+
+  hide-enabled-item:
+    material: LIME_DYE
+    name: "§aEsconder Players"
+    lore:
+      - "§7Clique para esconder/mostrar players."
+    slot: 8
+    enchantments:
+      - SHARPNESS:1
+    cooldown: 1.0
+
+  hide-disabled-item:
+    material: GRAY_DYE
+    name: "§aMostrar Players"
+    lore:
+      - "§7Clique para esconder/mostrar players."
+    slot: 8
+    enchantments:
+      - SHARPNESS:1
+    cooldown: 1.0
 
 # Exemplo de todas as ações possíveis:
 # - [console] <comando>: Executa um comando no console.
@@ -135,3 +157,15 @@ hotbar-lobby:
 #   Exemplo: [broadcastsound] ENTITY_ENDER_DRAGON_GROWL
 # - [sound] <som>: Toca um som apenas para o jogador.
 #   Exemplo: [sound] ENTITY_PLAYER_LEVELUP
+
+
+###############################################
+# COMMAND TELEPORT LOBBY #
+###############################################
+
+hub-teleport: true # Ativa ou desativa o comando /lobby
+cooldown: 5 # Tempo de cooldown em segundos
+warmup: # Configurações relacionadas ao warmup
+  only-other-world: true # Se true, o warmup só funciona em mundos que não são o lobby
+  time: 1 # Tempo de warmup em segundos
+  move: false # Se false, o jogador não pode se mover durante o warmup, caso contrário, o teleporte é cancelado

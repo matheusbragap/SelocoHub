@@ -2,18 +2,11 @@ package com.matheusdev.selocoplugin.selecoHub;
 
 import com.matheusdev.selocoplugin.selecoHub.commands.PluginReload;
 import com.matheusdev.selocoplugin.selecoHub.commands.SpawnTeleport;
-import com.matheusdev.selocoplugin.selecoHub.listeners.ProtectWorld;
-import com.matheusdev.selocoplugin.selecoHub.listeners.TpJoin;
-import com.matheusdev.selocoplugin.selecoHub.listeners.GameSettings;
-import com.matheusdev.selocoplugin.selecoHub.listeners.DistanceVoid;
-import com.matheusdev.selocoplugin.selecoHub.listeners.PlayerJoin;
-import com.matheusdev.selocoplugin.selecoHub.listeners.JumpPads;
+import com.matheusdev.selocoplugin.selecoHub.listeners.*;
 import com.matheusdev.selocoplugin.selecoHub.management.AutoCompleter;
 import com.matheusdev.selocoplugin.selecoHub.management.Commands;
 import com.matheusdev.selocoplugin.selecoHub.management.Permissions;
-import com.matheusdev.selocoplugin.selecoHub.inventory.OnJoin;
-import com.matheusdev.selocoplugin.selecoHub.inventory.ClickItems;
-import com.matheusdev.selocoplugin.selecoHub.inventory.ExecuteItemAction;
+import com.matheusdev.selocoplugin.selecoHub.inventory.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,7 +46,13 @@ public final class SelecoHub extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DistanceVoid(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
         getServer().getPluginManager().registerEvents(jumpPads, this);
-        getServer().getPluginManager().registerEvents(new OnJoin(this), this);
+
+        // Registrando a classe HidePlayers
+        HidePlayers hidePlayers = new HidePlayers(this);
+        getServer().getPluginManager().registerEvents(hidePlayers, this);
+
+        // Registrando a classe OnJoin com a instância de HidePlayers
+        getServer().getPluginManager().registerEvents(new OnJoin(this, hidePlayers), this);
 
         ExecuteItemAction executeItemAction = new ExecuteItemAction(this);
         getServer().getPluginManager().registerEvents(new ClickItems(this, executeItemAction), this);
